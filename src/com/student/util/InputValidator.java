@@ -52,6 +52,31 @@ public class InputValidator {
     }
 
     /**
+     * Validates and returns a valid name (alphabets and spaces only)
+     */
+    public static String getValidName(Scanner scanner, String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+
+            // Check if empty
+            if (input.isEmpty()) {
+                System.out.println("✗ Name cannot be empty! Please try again.");
+                continue;
+            }
+
+            // Check if contains only alphabets and spaces
+            if (input.matches("[a-zA-Z ]+")) {
+                return input;
+            } else {
+                System.out.println("✗ Invalid name! Name should contain only letters and spaces (no numbers or special characters).");
+                System.out.println("  Valid examples: 'John Doe', 'Alice Johnson', 'Bob Smith'");
+                System.out.println("  Invalid examples: 'John123', 'Alice@', 'Bob_Smith'");
+            }
+        }
+    }
+
+    /**
      * Pauses execution until user presses Enter
      */
     public static void pressEnterToContinue(Scanner scanner) {

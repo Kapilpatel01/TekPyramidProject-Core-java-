@@ -18,6 +18,8 @@ public interface StudentService {
 
     void updateStudent(int id, Student updatedStudent) throws StudentNotFoundException, InvalidInputException;
 
+    void updateStudentField(int id, String field, Object value) throws StudentNotFoundException, InvalidInputException;
+
     void deleteStudent(int id) throws StudentNotFoundException;
 
     int getStudentCount();

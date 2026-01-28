@@ -92,6 +92,52 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    public void updateStudentField(int id, String field, Object value) throws StudentNotFoundException, InvalidInputException {
+        Student student = searchStudentById(id);
+
+        switch (field.toLowerCase()) {
+            case "name":
+                if (value == null || value.toString().trim().isEmpty()) {
+                    throw new InvalidInputException("Name cannot be empty!");
+                }
+                // Validate name format - only letters and spaces allowed
+                if (!value.toString().matches("^[a-zA-Z ]+$")) {
+                    throw new InvalidInputException("Name must contain only letters and spaces (no numbers or special characters)!");
+                }
+                student.setName(value.toString());
+                break;
+
+            case "age":
+                int age = (int) value;
+                if (age < 5 || age > 100) {
+                    throw new InvalidInputException("Age must be between 5 and 100!");
+                }
+                student.setAge(age);
+                break;
+
+            case "course":
+                if (value == null || value.toString().trim().isEmpty()) {
+                    throw new InvalidInputException("Course cannot be empty!");
+                }
+                student.setCourse(value.toString());
+                break;
+
+            case "marks":
+                double marks = (double) value;
+                if (marks < 0 || marks > 100) {
+                    throw new InvalidInputException("Marks must be between 0 and 100!");
+                }
+                student.setMarks(marks);
+                break;
+
+            default:
+                throw new InvalidInputException("Invalid field: " + field);
+        }
+
+        System.out.println("\n✓ Student " + field + " updated successfully!");
+    }
+
+    @Override
     public void deleteStudent(int id) throws StudentNotFoundException {
         for (int i = 0; i < currentSize; i++) {
             if (students[i].getId() == id) {
@@ -119,6 +165,11 @@ public class StudentServiceImpl implements StudentService {
     private void validateStudent(Student student) throws InvalidInputException {
         if (student.getName() == null || student.getName().trim().isEmpty()) {
             throw new InvalidInputException("Name cannot be empty!");
+        }
+
+        // Validate name format - only letters and spaces allowed
+        if (!student.getName().matches("^[a-zA-Z ]+$")) {
+            throw new InvalidInputException("Name must contain only letters and spaces (no numbers or special characters)!");
         }
 
         if (student.getAge() < 5 || student.getAge() > 100) {

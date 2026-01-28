@@ -94,7 +94,7 @@ public class StudentManagementApp {
 
         try {
             int id = InputValidator.getValidInteger(scanner, "Enter Student ID: ");
-            String name = InputValidator.getValidString(scanner, "Enter Student Name: ");
+            String name = InputValidator.getValidName(scanner, "Enter Student Name: ");
             int age = InputValidator.getValidInteger(scanner, "Enter Student Age: ");
             String course = InputValidator.getValidString(scanner, "Enter Course Name: ");
             double marks = InputValidator.getValidDouble(scanner, "Enter Marks (0-100): ");
@@ -150,14 +150,71 @@ public class StudentManagementApp {
             System.out.println("\nCurrent Details:");
             System.out.println(existingStudent);
 
-            System.out.println("\nEnter New Details:");
-            String name = InputValidator.getValidString(scanner, "Enter New Name: ");
-            int age = InputValidator.getValidInteger(scanner, "Enter New Age: ");
-            String course = InputValidator.getValidString(scanner, "Enter New Course: ");
-            double marks = InputValidator.getValidDouble(scanner, "Enter New Marks (0-100): ");
+            // Display update options
+            System.out.println("\n" + "-".repeat(100));
+            System.out.println("Select what you want to update:");
+            System.out.println("-".repeat(100));
+            System.out.println("  1. Update Name Only");
+            System.out.println("  2. Update Age Only");
+            System.out.println("  3. Update Course Only");
+            System.out.println("  4. Update Marks Only");
+            System.out.println("  5. Update All Details");
+            System.out.println("  6. Cancel Update");
+            System.out.println("-".repeat(100));
 
-            Student updatedStudent = new Student(id, name, age, course, marks);
-            studentService.updateStudent(id, updatedStudent);
+            int updateChoice = InputValidator.getValidInteger(scanner, "Enter your choice (1-6): ");
+
+            switch (updateChoice) {
+                case 1:
+                    // Update Name Only
+                    String newName = InputValidator.getValidName(scanner, "Enter New Name: ");
+                    studentService.updateStudentField(id, "name", newName);
+                    break;
+
+                case 2:
+                    // Update Age Only
+                    int newAge = InputValidator.getValidInteger(scanner, "Enter New Age: ");
+                    studentService.updateStudentField(id, "age", newAge);
+                    break;
+
+                case 3:
+                    // Update Course Only
+                    String newCourse = InputValidator.getValidString(scanner, "Enter New Course: ");
+                    studentService.updateStudentField(id, "course", newCourse);
+                    break;
+
+                case 4:
+                    // Update Marks Only
+                    double newMarks = InputValidator.getValidDouble(scanner, "Enter New Marks (0-100): ");
+                    studentService.updateStudentField(id, "marks", newMarks);
+                    break;
+
+                case 5:
+                    // Update All Details
+                    System.out.println("\nEnter All New Details:");
+                    String name = InputValidator.getValidName(scanner, "Enter New Name: ");
+                    int age = InputValidator.getValidInteger(scanner, "Enter New Age: ");
+                    String course = InputValidator.getValidString(scanner, "Enter New Course: ");
+                    double marks = InputValidator.getValidDouble(scanner, "Enter New Marks (0-100): ");
+
+                    Student updatedStudent = new Student(id, name, age, course, marks);
+                    studentService.updateStudent(id, updatedStudent);
+                    break;
+
+                case 6:
+                    // Cancel
+                    System.out.println("\n⚠ Update cancelled.");
+                    return;
+
+                default:
+                    System.out.println("\n✗ Invalid choice! Update cancelled.");
+                    return;
+            }
+
+            // Show updated details
+            System.out.println("\nUpdated Details:");
+            Student updated = studentService.searchStudentById(id);
+            System.out.println(updated);
 
         } catch (StudentNotFoundException e) {
             System.out.println("\n✗ " + e.getMessage());
