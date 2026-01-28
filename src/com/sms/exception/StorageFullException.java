@@ -1,4 +1,4 @@
-package com.student.exception;
+package com.sms.exception;
 
 /**
  * Custom exception thrown when trying to add more students than array capacity

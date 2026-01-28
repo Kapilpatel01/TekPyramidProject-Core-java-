@@ -1,9 +1,9 @@
-package com.student.service;
+package com.sms.service;
 
-import com.student.model.Student;
-import com.student.exception.StudentNotFoundException;
-import com.student.exception.StorageFullException;
-import com.student.exception.InvalidInputException;
+import com.sms.model.Student;
+import com.sms.exception.StudentNotFoundException;
+import com.sms.exception.StorageFullException;
+import com.sms.exception.InvalidInputException;
 
 /**
  * Service interface demonstrating Abstraction
@@ -15,6 +15,10 @@ public interface StudentService {
     void viewAllStudents();
 
     Student searchStudentById(int id) throws StudentNotFoundException;
+
+    Student[] searchStudentsByName(String name);
+
+    Student searchStudentByEmail(String email) throws StudentNotFoundException;
 
     void updateStudent(int id, Student updatedStudent) throws StudentNotFoundException, InvalidInputException;
 

@@ -1,4 +1,4 @@
-package com.student.model;
+package com.sms.model;
 
 
 /**

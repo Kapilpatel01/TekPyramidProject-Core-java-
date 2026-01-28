@@ -1,12 +1,12 @@
-package com.student.main;
+package com.sms.main;
 
-import com.student.model.Student;
-import com.student.service.StudentService;
-import com.student.service.StudentServiceImpl;
-import com.student.exception.StudentNotFoundException;
-import com.student.exception.StorageFullException;
-import com.student.exception.InvalidInputException;
-import com.student.util.InputValidator;
+import com.sms.model.Student;
+import com.sms.service.StudentService;
+import com.sms.service.StudentServiceImpl;
+import com.sms.exception.StudentNotFoundException;
+import com.sms.exception.StorageFullException;
+import com.sms.exception.InvalidInputException;
+import com.sms.util.InputValidator;
 
 import java.util.Scanner;
 
@@ -69,37 +69,38 @@ public class StudentManagementApp {
     }
 
     private static void displayWelcomeBanner() {
-        System.out.println("\n" + "=".repeat(100));
-        System.out.println("                         WELCOME TO STUDENT MANAGEMENT SYSTEM");
-        System.out.println("=".repeat(100));
+        System.out.println("\n" + "=".repeat(120));
+        System.out.println("                            WELCOME TO STUDENT MANAGEMENT SYSTEM");
+        System.out.println("=".repeat(120));
     }
 
     private static void displayMenu() {
-        System.out.println("\n" + "=".repeat(100));
-        System.out.println("                                    MAIN MENU");
-        System.out.println("=".repeat(100));
+        System.out.println("\n" + "=".repeat(120));
+        System.out.println("                                        MAIN MENU");
+        System.out.println("=".repeat(120));
         System.out.println("  1. Add Student");
         System.out.println("  2. View All Students");
-        System.out.println("  3. Search Student by ID");
+        System.out.println("  3. Search Students");
         System.out.println("  4. Update Student Details");
         System.out.println("  5. Delete Student");
         System.out.println("  6. Exit");
-        System.out.println("=".repeat(100));
+        System.out.println("=".repeat(120));
     }
 
     private static void addStudent() {
-        System.out.println("\n" + "-".repeat(100));
-        System.out.println("                                  ADD NEW STUDENT");
-        System.out.println("-".repeat(100));
+        System.out.println("\n" + "-".repeat(120));
+        System.out.println("                                    ADD NEW STUDENT");
+        System.out.println("-".repeat(120));
 
         try {
             int id = InputValidator.getValidInteger(scanner, "Enter Student ID: ");
             String name = InputValidator.getValidName(scanner, "Enter Student Name: ");
-            int age = InputValidator.getValidInteger(scanner, "Enter Student Age: ");
+            int age = InputValidator.getValidAge(scanner, "Enter Student Age (18-40): ");
+            String email = InputValidator.getValidEmail(scanner, "Enter Student Email: ");
             String course = InputValidator.getValidString(scanner, "Enter Course Name: ");
             double marks = InputValidator.getValidDouble(scanner, "Enter Marks (0-100): ");
 
-            Student student = new Student(id, name, age, course, marks);
+            Student student = new Student(id, name, age, course, marks, email);
             studentService.addStudent(student);
 
         } catch (StorageFullException e) {
@@ -110,26 +111,76 @@ public class StudentManagementApp {
     }
 
     private static void viewAllStudents() {
-        System.out.println("\n" + "-".repeat(100));
-        System.out.println("                                  ALL STUDENTS");
-        System.out.println("-".repeat(100));
+        System.out.println("\n" + "-".repeat(120));
+        System.out.println("                                    ALL STUDENTS");
+        System.out.println("-".repeat(120));
 
         studentService.viewAllStudents();
     }
 
     private static void searchStudent() {
-        System.out.println("\n" + "-".repeat(100));
-        System.out.println("                                 SEARCH STUDENT");
-        System.out.println("-".repeat(100));
+        System.out.println("\n" + "-".repeat(120));
+        System.out.println("                                    SEARCH STUDENT");
+        System.out.println("-".repeat(120));
+
+        System.out.println("Search by:");
+        System.out.println("  1. Student ID");
+        System.out.println("  2. Student Name");
+        System.out.println("  3. Student Email");
+        System.out.println("  4. Cancel");
+        System.out.println("-".repeat(120));
+
+        int searchChoice = InputValidator.getValidInteger(scanner, "Enter your choice (1-4): ");
 
         try {
-            int id = InputValidator.getValidInteger(scanner, "Enter Student ID to search: ");
-            Student student = studentService.searchStudentById(id);
+            switch (searchChoice) {
+                case 1:
+                    // Search by ID
+                    int id = InputValidator.getValidInteger(scanner, "Enter Student ID to search: ");
+                    Student student = studentService.searchStudentById(id);
 
-            System.out.println("\n✓ Student Found:");
-            System.out.println("=".repeat(100));
-            System.out.println(student);
-            System.out.println("=".repeat(100));
+                    System.out.println("\n✓ Student Found:");
+                    System.out.println("=".repeat(120));
+                    System.out.println(student);
+                    System.out.println("=".repeat(120));
+                    break;
+
+                case 2:
+                    // Search by Name
+                    String name = InputValidator.getValidString(scanner, "Enter Student Name to search: ");
+                    Student[] nameResults = studentService.searchStudentsByName(name);
+
+                    if (nameResults.length == 0) {
+                        System.out.println("\n⚠ No students found with name containing: " + name);
+                    } else {
+                        System.out.println("\n✓ Found " + nameResults.length + " student(s):");
+                        System.out.println("=".repeat(120));
+                        for (Student s : nameResults) {
+                            System.out.println(s);
+                        }
+                        System.out.println("=".repeat(120));
+                    }
+                    break;
+
+                case 3:
+                    // Search by Email
+                    String email = InputValidator.getValidEmail(scanner, "Enter Student Email to search: ");
+                    Student emailStudent = studentService.searchStudentByEmail(email);
+
+                    System.out.println("\n✓ Student Found:");
+                    System.out.println("=".repeat(120));
+                    System.out.println(emailStudent);
+                    System.out.println("=".repeat(120));
+                    break;
+
+                case 4:
+                    // Cancel
+                    System.out.println("\n⚠ Search cancelled.");
+                    return;
+
+                default:
+                    System.out.println("\n✗ Invalid choice!");
+            }
 
         } catch (StudentNotFoundException e) {
             System.out.println("\n✗ " + e.getMessage());
@@ -137,9 +188,9 @@ public class StudentManagementApp {
     }
 
     private static void updateStudent() {
-        System.out.println("\n" + "-".repeat(100));
-        System.out.println("                                UPDATE STUDENT");
-        System.out.println("-".repeat(100));
+        System.out.println("\n" + "-".repeat(120));
+        System.out.println("                                    UPDATE STUDENT");
+        System.out.println("-".repeat(120));
 
         try {
             int id = InputValidator.getValidInteger(scanner, "Enter Student ID to update: ");
@@ -151,18 +202,19 @@ public class StudentManagementApp {
             System.out.println(existingStudent);
 
             // Display update options
-            System.out.println("\n" + "-".repeat(100));
+            System.out.println("\n" + "-".repeat(120));
             System.out.println("Select what you want to update:");
-            System.out.println("-".repeat(100));
+            System.out.println("-".repeat(120));
             System.out.println("  1. Update Name Only");
             System.out.println("  2. Update Age Only");
-            System.out.println("  3. Update Course Only");
-            System.out.println("  4. Update Marks Only");
-            System.out.println("  5. Update All Details");
-            System.out.println("  6. Cancel Update");
-            System.out.println("-".repeat(100));
+            System.out.println("  3. Update Email Only");
+            System.out.println("  4. Update Course Only");
+            System.out.println("  5. Update Marks Only");
+            System.out.println("  6. Update All Details");
+            System.out.println("  7. Cancel Update");
+            System.out.println("-".repeat(120));
 
-            int updateChoice = InputValidator.getValidInteger(scanner, "Enter your choice (1-6): ");
+            int updateChoice = InputValidator.getValidInteger(scanner, "Enter your choice (1-7): ");
 
             switch (updateChoice) {
                 case 1:
@@ -173,35 +225,42 @@ public class StudentManagementApp {
 
                 case 2:
                     // Update Age Only
-                    int newAge = InputValidator.getValidInteger(scanner, "Enter New Age: ");
+                    int newAge = InputValidator.getValidAge(scanner, "Enter New Age (18-40): ");
                     studentService.updateStudentField(id, "age", newAge);
                     break;
 
                 case 3:
+                    // Update Email Only
+                    String newEmail = InputValidator.getValidEmail(scanner, "Enter New Email: ");
+                    studentService.updateStudentField(id, "email", newEmail);
+                    break;
+
+                case 4:
                     // Update Course Only
                     String newCourse = InputValidator.getValidString(scanner, "Enter New Course: ");
                     studentService.updateStudentField(id, "course", newCourse);
                     break;
 
-                case 4:
+                case 5:
                     // Update Marks Only
                     double newMarks = InputValidator.getValidDouble(scanner, "Enter New Marks (0-100): ");
                     studentService.updateStudentField(id, "marks", newMarks);
                     break;
 
-                case 5:
+                case 6:
                     // Update All Details
                     System.out.println("\nEnter All New Details:");
                     String name = InputValidator.getValidName(scanner, "Enter New Name: ");
-                    int age = InputValidator.getValidInteger(scanner, "Enter New Age: ");
+                    int age = InputValidator.getValidAge(scanner, "Enter New Age (18-40): ");
+                    String email = InputValidator.getValidEmail(scanner, "Enter New Email: ");
                     String course = InputValidator.getValidString(scanner, "Enter New Course: ");
                     double marks = InputValidator.getValidDouble(scanner, "Enter New Marks (0-100): ");
 
-                    Student updatedStudent = new Student(id, name, age, course, marks);
+                    Student updatedStudent = new Student(id, name, age, course, marks, email);
                     studentService.updateStudent(id, updatedStudent);
                     break;
 
-                case 6:
+                case 7:
                     // Cancel
                     System.out.println("\n⚠ Update cancelled.");
                     return;
@@ -224,9 +283,9 @@ public class StudentManagementApp {
     }
 
     private static void deleteStudent() {
-        System.out.println("\n" + "-".repeat(100));
-        System.out.println("                                DELETE STUDENT");
-        System.out.println("-".repeat(100));
+        System.out.println("\n" + "-".repeat(120));
+        System.out.println("                                    DELETE STUDENT");
+        System.out.println("-".repeat(120));
 
         try {
             int id = InputValidator.getValidInteger(scanner, "Enter Student ID to delete: ");
@@ -251,9 +310,9 @@ public class StudentManagementApp {
     }
 
     private static void displayExitMessage() {
-        System.out.println("\n" + "=".repeat(100));
-        System.out.println("                    Thank you for using Student Management System!");
-        System.out.println("                                   Goodbye!");
-        System.out.println("=".repeat(100));
+        System.out.println("\n" + "=".repeat(120));
+        System.out.println("                        Thank you for using Student Management System!");
+        System.out.println("                                    Goodbye!");
+        System.out.println("=".repeat(120));
     }
 }

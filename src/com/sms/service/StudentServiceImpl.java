@@ -1,9 +1,9 @@
-package com.student.service;
+package com.sms.service;
 
-import com.student.model.Student;
-import com.student.exception.StudentNotFoundException;
-import com.student.exception.StorageFullException;
-import com.student.exception.InvalidInputException;
+import com.sms.model.Student;
+import com.sms.exception.StudentNotFoundException;
+import com.sms.exception.StorageFullException;
+import com.sms.exception.InvalidInputException;
 
 /**
  * Implementation of StudentService interface
@@ -75,6 +75,38 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    public Student[] searchStudentsByName(String name) {
+        // First, count matching students
+        int count = 0;
+        for (int i = 0; i < currentSize; i++) {
+            if (students[i].getName().toLowerCase().contains(name.toLowerCase())) {
+                count++;
+            }
+        }
+
+        // Create array of matching students
+        Student[] results = new Student[count];
+        int index = 0;
+        for (int i = 0; i < currentSize; i++) {
+            if (students[i].getName().toLowerCase().contains(name.toLowerCase())) {
+                results[index++] = students[i];
+            }
+        }
+
+        return results;
+    }
+
+    @Override
+    public Student searchStudentByEmail(String email) throws StudentNotFoundException {
+        for (int i = 0; i < currentSize; i++) {
+            if (students[i].getEmail().equalsIgnoreCase(email)) {
+                return students[i];
+            }
+        }
+        throw new StudentNotFoundException("Student with email " + email + " not found!");
+    }
+
+    @Override
     public void updateStudent(int id, Student updatedStudent) throws StudentNotFoundException, InvalidInputException {
         // Validate updated student data
         validateStudent(updatedStudent);
@@ -109,8 +141,8 @@ public class StudentServiceImpl implements StudentService {
 
             case "age":
                 int age = (int) value;
-                if (age < 5 || age > 100) {
-                    throw new InvalidInputException("Age must be between 5 and 100!");
+                if (age < 18 || age > 40) {
+                    throw new InvalidInputException("Age must be between 18 and 40!");
                 }
                 student.setAge(age);
                 break;
@@ -120,6 +152,17 @@ public class StudentServiceImpl implements StudentService {
                     throw new InvalidInputException("Course cannot be empty!");
                 }
                 student.setCourse(value.toString());
+                break;
+
+            case "email":
+                if (value == null || value.toString().trim().isEmpty()) {
+                    throw new InvalidInputException("Email cannot be empty!");
+                }
+                // Validate email format
+                if (!value.toString().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+                    throw new InvalidInputException("Invalid email format!");
+                }
+                student.setEmail(value.toString().toLowerCase());
                 break;
 
             case "marks":
@@ -172,8 +215,17 @@ public class StudentServiceImpl implements StudentService {
             throw new InvalidInputException("Name must contain only letters and spaces (no numbers or special characters)!");
         }
 
-        if (student.getAge() < 5 || student.getAge() > 100) {
-            throw new InvalidInputException("Age must be between 5 and 100!");
+        if (student.getAge() < 18 || student.getAge() > 40) {
+            throw new InvalidInputException("Age must be between 18 and 40!");
+        }
+
+        if (student.getEmail() == null || student.getEmail().trim().isEmpty()) {
+            throw new InvalidInputException("Email cannot be empty!");
+        }
+
+        // Validate email format
+        if (!student.getEmail().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+            throw new InvalidInputException("Invalid email format!");
         }
 
         if (student.getCourse() == null || student.getCourse().trim().isEmpty()) {

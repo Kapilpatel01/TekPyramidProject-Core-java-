@@ -1,4 +1,4 @@
-package com.student.exception;
+package com.sms.exception;
 
 /**
  * Custom exception thrown when invalid input is provided

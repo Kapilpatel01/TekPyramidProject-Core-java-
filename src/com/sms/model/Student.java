@@ -1,4 +1,4 @@
-package com.student.model;
+package com.sms.model;
 
 /**
  * Student class demonstrating Encapsulation
@@ -9,13 +9,15 @@ public class Student extends Entity {
     private int age;
     private String course;
     private double marks;
+    private String email;
 
-    public Student(int id, String name, int age, String course, double marks) {
+    public Student(int id, String name, int age, String course, double marks, String email) {
         super(id);
         this.name = name;
         this.age = age;
         this.course = course;
         this.marks = marks;
+        this.email = email;
     }
 
     // Getters
@@ -35,6 +37,10 @@ public class Student extends Entity {
         return marks;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     // Setters
     public void setName(String name) {
         this.name = name;
@@ -52,9 +58,13 @@ public class Student extends Entity {
         this.marks = marks;
     }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public String toString() {
-        return String.format("ID: %-5d | Name: %-20s | Age: %-3d | Course: %-15s | Marks: %.2f",
-                id, name, age, course, marks);
+        return String.format("ID: %-5d | Name: %-20s | Age: %-3d | Email: %-25s | Course: %-15s | Marks: %.2f",
+                id, name, age, email, course, marks);
     }
 }
