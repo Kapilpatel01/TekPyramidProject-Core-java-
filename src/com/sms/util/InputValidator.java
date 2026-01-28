@@ -61,6 +61,29 @@ public class InputValidator {
     }
 
     /**
+     * Validates and returns valid marks (0-100)
+     */
+    public static double getValidMarks(Scanner scanner, String prompt) {
+        while (true) {
+            try {
+                System.out.print(prompt);
+                String input = scanner.nextLine().trim();
+                double marks = Double.parseDouble(input);
+
+                if (marks < 0 || marks > 100) {
+                    System.out.println("✗ Invalid marks! Marks must be between 0 and 100.");
+                    System.out.println("  Please enter a valid percentage score.");
+                    continue;
+                }
+
+                return marks;
+            } catch (NumberFormatException e) {
+                System.out.println("✗ Invalid input! Please enter a valid number.");
+            }
+        }
+    }
+
+    /**
      * Validates and returns a non-empty string
      */
     public static String getValidString(Scanner scanner, String prompt) {
